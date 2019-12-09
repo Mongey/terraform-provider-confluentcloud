@@ -1,6 +1,7 @@
 package ccloud
 
 import (
+	"fmt"
 	"log"
 
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
@@ -43,7 +44,14 @@ func kafkaClusterResource() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "single-zone or multi-zone",
+				Description: "LOW(single-zone) or HIGH(multi-zone)",
+				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
+					v := val.(string)
+					if val != "LOW" || val != "HIGH" {
+						errs = append(errs, fmt.Errorf("%q must be `LOW` or `HIGH`, got: %d", key, v))
+					}
+					return
+				},
 			},
 		},
 	}
@@ -55,6 +63,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	name := d.Get("name").(string)
 	region := d.Get("region").(string)
 	serviceProvider := d.Get("service_provider").(string)
+	durability := d.Get("availability").(string)
 	accountID, err := getAccountID(c)
 
 	if err != nil {
@@ -67,6 +76,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 		ServiceProvider: serviceProvider,
 		Storage:         5000, // TODO: paramaterize
 		AccountID:       accountID,
+		Durability:      durability,
 	}
 	cluster, err := c.CreateCluster(req)
 
