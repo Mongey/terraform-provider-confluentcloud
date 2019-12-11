@@ -47,8 +47,8 @@ func kafkaClusterResource() *schema.Resource {
 				Description: "LOW(single-zone) or HIGH(multi-zone)",
 				ValidateFunc: func(val interface{}, key string) (warns []string, errs []error) {
 					v := val.(string)
-					if val != "LOW" || val != "HIGH" {
-						errs = append(errs, fmt.Errorf("%q must be `LOW` or `HIGH`, got: %d", key, v))
+					if val != "LOW" && val != "HIGH" {
+						errs = append(errs, fmt.Errorf("%q must be `LOW` or `HIGH`, got: %s", key, v))
 					}
 					return
 				},
