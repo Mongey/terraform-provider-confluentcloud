@@ -33,7 +33,7 @@ func Provider() terraform.ResourceProvider {
 }
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	log.Printf("[INFO] Initializing KafkaConnect client")
+	log.Printf("[INFO] Initializing ConfluentCloud client")
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
 	c := confluentcloud.NewClient(username, password)
