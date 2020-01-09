@@ -80,9 +80,11 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	cluster, err := c.CreateCluster(req)
 
-	if err == nil {
-		d.SetId(cluster.ID)
+	if err != nil {
+		return err
 	}
+
+	d.SetId(cluster.ID)
 
 	return nil
 }
