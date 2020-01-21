@@ -85,6 +85,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(cluster.ID)
+	d.Set("bootstrap_servers", cluster.Endpoint)
 
 	return nil
 }
