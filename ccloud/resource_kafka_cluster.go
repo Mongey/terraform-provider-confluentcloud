@@ -87,7 +87,10 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetId(cluster.ID)
-	d.Set("bootstrap_servers", cluster.Endpoint)
+	err = d.Set("bootstrap_servers", cluster.Endpoint)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -106,25 +109,10 @@ func clusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[WARN] hello %s", cluster.APIEndpoint)
-	d.Set("bootstrap_servers", cluster.Endpoint)
+	err = d.Set("bootstrap_servers", cluster.Endpoint)
+	if err != nil {
+		return err
+	}
 
 	return nil
-}
-
-func nameFromRD(d *schema.ResourceData) string {
-	return d.Get("name").(string)
-}
-
-func configFromRD(d *schema.ResourceData) map[string]string {
-	cfg := d.Get("config").(map[string]interface{})
-	scfg := d.Get("config_sensitive").(map[string]interface{})
-	config := make(map[string]string)
-	for k, v := range cfg {
-		config[k] = v.(string)
-	}
-	for k, v := range scfg {
-		config[k] = v.(string)
-	}
-
-	return config
 }

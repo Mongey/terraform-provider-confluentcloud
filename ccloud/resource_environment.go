@@ -71,7 +71,10 @@ func environmentRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	d.Set("name", env.Name)
+	err = d.Set("name", env.Name)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -60,8 +60,16 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	key, err := c.CreateAPIKey(&req)
 	if err == nil {
 		d.SetId(fmt.Sprintf("%d", key.ID))
-		d.Set("key", key.Key)
-		d.Set("secret", key.Secret)
+
+		err = d.Set("key", key.Key)
+		if err != nil {
+			return err
+		}
+
+		err = d.Set("secret", key.Secret)
+		if err != nil {
+			return err
+		}
 	} else {
 		log.Printf("[WARN] err creating: %s", err)
 	}
