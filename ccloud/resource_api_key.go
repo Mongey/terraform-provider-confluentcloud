@@ -23,6 +23,12 @@ func apiKeyResource() *schema.Resource {
 				ForceNew:    true,
 				Description: "",
 			},
+			"environment_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Environment ID",
+			},
 			"key": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -40,10 +46,7 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*ccloud.Client)
 
 	clusterID := d.Get("cluster_id").(string)
-	accountID, err := getAccountID(c)
-	if err != nil {
-		return err
-	}
+	accountID := d.Get("environment_id").(string)
 
 	req := ccloud.ApiKeyCreateRequest{
 		AccountID: accountID,

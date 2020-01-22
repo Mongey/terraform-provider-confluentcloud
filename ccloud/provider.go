@@ -28,6 +28,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"confluentcloud_kafka_cluster": kafkaClusterResource(),
 			"confluentcloud_api_key":       apiKeyResource(),
+			"confluentcloud_environment":   environmentResource(),
 		},
 	}
 }
@@ -38,5 +39,5 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	password := d.Get("password").(string)
 	c := confluentcloud.NewClient(username, password)
 
-	return c, nil
+	return c, c.Login()
 }

@@ -9,13 +9,18 @@ your [terraform plugin directory][third-party-plugins] (typically `~/.terraform.
 
 ## Example
 
-Configure the provider directly, or set the ENV variables `CONFLUENT_CLOUD_USERNAME` &`CONFLUENT_CLOUD_PASSWORD` 
+Configure the provider directly, or set the ENV variables `CONFLUENT_CLOUD_USERNAME` &`CONFLUENT_CLOUD_PASSWORD`
 
 ```hcl
 provider "confluentcloud" {}
 
+resource "confluentcloud_environment" "test" {
+  name = "provider-test"
+}
+
 resource "confluentcloud_kafka_cluster" "test" {
   name             = "provider-test"
+  environment_id   = confluentcloud_environment.test.id
   service_provider = "aws"
   region           = "eu-west-1"
   availability     = "single-zone"
@@ -23,6 +28,7 @@ resource "confluentcloud_kafka_cluster" "test" {
 
 resource "confluentcloud_api_key" "provider_test" {
   cluster_id = confluentcloud_kafka_cluster.test.id
+  environment_id   = confluentcloud_environment.test.id
 }
 
 provider "kafka" {

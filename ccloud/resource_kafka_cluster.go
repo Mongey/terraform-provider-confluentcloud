@@ -24,6 +24,12 @@ func kafkaClusterResource() *schema.Resource {
 				ForceNew:    true,
 				Description: "The name of the cluster",
 			},
+			"environment_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Environment ID",
+			},
 			"bootstrap_servers": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -64,11 +70,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	region := d.Get("region").(string)
 	serviceProvider := d.Get("service_provider").(string)
 	durability := d.Get("availability").(string)
-	accountID, err := getAccountID(c)
-
-	if err != nil {
-		return err
-	}
+	accountID := d.Get("environment_id").(string)
 
 	req := ccloud.ClusterCreateConfig{
 		Name:            name,
@@ -96,10 +98,7 @@ func clusterDelete(d *schema.ResourceData, meta interface{}) error {
 
 func clusterRead(d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*ccloud.Client)
-	accountID, err := getAccountID(c)
-	if err != nil {
-		return err
-	}
+	accountID := d.Get("environment_id").(string)
 
 	cluster, err := c.GetCluster(d.Id(), accountID)
 	if err != nil {
@@ -128,18 +127,4 @@ func configFromRD(d *schema.ResourceData) map[string]string {
 	}
 
 	return config
-}
-
-func getAccountID(client *ccloud.Client) (string, error) {
-	err := client.Login()
-	if err != nil {
-		return "", err
-	}
-
-	userData, err := client.Me()
-	if err != nil {
-		return "", err
-	}
-
-	return userData.Account.ID, nil
 }
