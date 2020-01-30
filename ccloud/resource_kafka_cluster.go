@@ -96,7 +96,10 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func clusterDelete(d *schema.ResourceData, meta interface{}) error {
-	return nil
+	c := meta.(*ccloud.Client)
+	accountID := d.Get("environment_id").(string)
+
+	return c.DeleteCluster(d.Id(), accountID)
 }
 
 func clusterRead(d *schema.ResourceData, meta interface{}) error {
