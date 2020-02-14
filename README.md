@@ -23,7 +23,7 @@ resource "confluentcloud_kafka_cluster" "test" {
   environment_id   = confluentcloud_environment.test.id
   service_provider = "aws"
   region           = "eu-west-1"
-  availability     = "single-zone"
+  availability     = "LOW"
 }
 
 resource "confluentcloud_api_key" "provider_test" {
