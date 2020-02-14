@@ -18,7 +18,7 @@ func environmentResource() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
+				ForceNew:    false,
 				Description: "The name of the environment",
 			},
 		},
