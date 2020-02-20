@@ -1,3 +1,4 @@
+project_name: terraform-provider-confluentcloud
 builds:
   - binary: "{{ .ProjectName }}_v{{ .Version }}"
     env:
