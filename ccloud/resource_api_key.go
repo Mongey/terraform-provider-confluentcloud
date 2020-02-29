@@ -71,7 +71,7 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 	} else {
-		log.Printf("[WARN] err creating: %s", err)
+		log.Printf("[ERROR] Could not create API key: %s", err)
 	}
 
 	return err
@@ -82,5 +82,6 @@ func apiKeyRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func apiKeyDelete(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[INFO] API key cannot be deleted: %s", d.Id())
 	return nil
 }

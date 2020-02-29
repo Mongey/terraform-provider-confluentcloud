@@ -1,6 +1,8 @@
 package ccloud
 
 import (
+	"log"
+
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -30,10 +32,12 @@ func environmentCreate(d *schema.ResourceData, meta interface{}) error {
 
 	name := d.Get("name").(string)
 
+	log.Printf("[INFO] Creating Environment %s", name)
 	orgID, err := getOrganizationID(c)
 	if err != nil {
 		return err
 	}
+
 	env, err := c.CreateEnvironment(name, orgID)
 	if err != nil {
 		return err
@@ -49,10 +53,12 @@ func environmentUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	newName := d.Get("name").(string)
 
+	log.Printf("[INFO] Updating Environment %s", d.Id())
 	orgID, err := getOrganizationID(c)
 	if err != nil {
 		return err
 	}
+
 	env, err := c.UpdateEnvironment(d.Id(), newName, orgID)
 	if err != nil {
 		return err
@@ -66,6 +72,7 @@ func environmentUpdate(d *schema.ResourceData, meta interface{}) error {
 func environmentRead(d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*ccloud.Client)
 
+	log.Printf("[INFO] Reading Environment %s", d.Id())
 	env, err := c.GetEnvironment(d.Id())
 	if err != nil {
 		return err
@@ -82,6 +89,7 @@ func environmentRead(d *schema.ResourceData, meta interface{}) error {
 func environmentDelete(d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*ccloud.Client)
 
+	log.Printf("[INFO] Deleting Environment %s", d.Id())
 	err := c.DeleteEnvironment(d.Id())
 	if err != nil {
 		return err
