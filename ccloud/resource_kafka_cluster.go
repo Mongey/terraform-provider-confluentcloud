@@ -72,6 +72,8 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	durability := d.Get("availability").(string)
 	accountID := d.Get("environment_id").(string)
 
+	log.Printf("[DEBUG] Creating kafka_cluster")
+
 	req := ccloud.ClusterCreateConfig{
 		Name:            name,
 		Region:          region,
