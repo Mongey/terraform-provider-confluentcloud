@@ -59,6 +59,38 @@ func kafkaClusterResource() *schema.Resource {
 					return
 				},
 			},
+			"storage": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Storage limit(GB)",
+			},
+			"network_ingress": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Network ingress limit(MBps)",
+			},
+			"network_egress": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Network egress limit(MBps)",
+			},
+			"deployment": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Deployment settings.  Currently only `sku` is supported.",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"sku": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
@@ -71,17 +103,30 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	serviceProvider := d.Get("service_provider").(string)
 	durability := d.Get("availability").(string)
 	accountID := d.Get("environment_id").(string)
+	deployment := d.Get("deployment").(map[string]interface{})
+	storage := d.Get("storage").(int)
+	network_ingress := d.Get("network_ingress").(int)
+	network_egress := d.Get("network_egress").(int)
 
 	log.Printf("[DEBUG] Creating kafka_cluster")
+
+	dep := ccloud.ClusterCreateDeploymentConfig{
+		AccountID: accountID,
+		Sku:       deployment["sku"].(string),
+	}
 
 	req := ccloud.ClusterCreateConfig{
 		Name:            name,
 		Region:          region,
 		ServiceProvider: serviceProvider,
-		Storage:         5000, // TODO: paramaterize
+		Storage:         storage,
 		AccountID:       accountID,
 		Durability:      durability,
+		Deployment:      dep,
+		NetworkIngress:  network_ingress,
+		NetworkEgress:   network_egress,
 	}
+
 	cluster, err := c.CreateCluster(req)
 
 	if err != nil {
