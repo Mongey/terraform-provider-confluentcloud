@@ -26,9 +26,10 @@ func Provider() terraform.ResourceProvider {
 		},
 		ConfigureFunc: providerConfigure,
 		ResourcesMap: map[string]*schema.Resource{
-			"confluentcloud_kafka_cluster": kafkaClusterResource(),
-			"confluentcloud_api_key":       apiKeyResource(),
-			"confluentcloud_environment":   environmentResource(),
+			"confluentcloud_kafka_cluster":   kafkaClusterResource(),
+			"confluentcloud_api_key":         apiKeyResource(),
+			"confluentcloud_environment":     environmentResource(),
+			"confluentcloud_service_account": serviceAccountResource(),
 		},
 	}
 }
