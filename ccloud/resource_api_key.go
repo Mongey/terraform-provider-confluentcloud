@@ -19,9 +19,24 @@ func apiKeyResource() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				ForceNew:    true,
 				Description: "",
+			},
+			"logical_clusters": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Logical Cluster ID List to create API KEY",
+			},
+			"user_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "User ID",
 			},
 			"environment_id": {
 				Type:        schema.TypeString,
@@ -46,15 +61,28 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	c := meta.(*ccloud.Client)
 
 	clusterID := d.Get("cluster_id").(string)
+	logicalClusters := d.Get("logical_clusters").([]interface{})
 	accountID := d.Get("environment_id").(string)
+	userID := d.Get("user_id").(int)
+
+	logicalClustersReq := []ccloud.LogicalCluster{}
+
+	if len(clusterID) > 0 {
+		logicalClustersReq = append(logicalClustersReq, ccloud.LogicalCluster{ID: clusterID})
+	}
+
+	for i := range logicalClusters {
+		if clusterID != logicalClusters[i].(string) {
+			logicalClustersReq = append(logicalClustersReq, ccloud.LogicalCluster{
+				ID: logicalClusters[i].(string),
+			})
+		}
+	}
 
 	req := ccloud.ApiKeyCreateRequest{
-		AccountID: accountID,
-		LogicalClusters: []ccloud.LogicalCluster{
-			ccloud.LogicalCluster{
-				ID: clusterID,
-			},
-		},
+		AccountID:       accountID,
+		UserID:          userID,
+		LogicalClusters: logicalClustersReq,
 	}
 
 	key, err := c.CreateAPIKey(&req)
