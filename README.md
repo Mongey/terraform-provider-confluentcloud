@@ -31,6 +31,11 @@ resource "confluentcloud_api_key" "provider_test" {
   environment_id = confluentcloud_environment.environment.id
 }
 
+resource "confluentcloud_service_account" "test" {
+  name           = "test"
+  description    = "service account test"
+}
+
 locals {
   bootstrap_servers = [replace(confluentcloud_kafka_cluster.test.bootstrap_servers, "SASL_SSL://", "")]
 }
