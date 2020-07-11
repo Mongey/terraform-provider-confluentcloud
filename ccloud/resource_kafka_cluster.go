@@ -159,15 +159,33 @@ func clusterRead(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("environment_id").(string)
 
 	cluster, err := c.GetCluster(d.Id(), accountID)
-	if err != nil {
-		return err
+	if err == nil {
+		log.Printf("[WARN] hello %s", cluster.APIEndpoint)
+		err = d.Set("bootstrap_servers", cluster.Endpoint)
 	}
-
-	log.Printf("[WARN] hello %s", cluster.APIEndpoint)
-	err = d.Set("bootstrap_servers", cluster.Endpoint)
-	if err != nil {
-		return err
+	if err == nil {
+		err = d.Set("name", cluster.Name)
 	}
-
-	return nil
+	if err == nil {
+		err = d.Set("region", cluster.Region)
+	}
+	if err == nil {
+		err = d.Set("service_provider", cluster.ServiceProvider)
+	}
+	if err == nil {
+		err = d.Set("availability", cluster.Durability)
+	}
+	if err == nil {
+		err = d.Set("deployment", map[string]interface{}{ "sku": cluster.Deployment.Sku })
+	}
+	if err == nil {
+		err = d.Set("storage", cluster.Storage)
+	}
+	if err == nil {
+		err = d.Set("network_ingress", cluster.NetworkIngress)
+	}
+	if err == nil {
+		err = d.Set("network_egress", cluster.NetworkEgress)
+	}
+	return err
 }
