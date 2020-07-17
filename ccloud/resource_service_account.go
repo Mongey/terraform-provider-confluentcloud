@@ -74,18 +74,17 @@ func serviceAccountDelete(d *schema.ResourceData, meta interface{}) error {
 
 	ID, err := strconv.Atoi(d.Id())
 	if err != nil {
-		log.Println("[ERROR] Could not parse Service Account ID %s to int", d.Id())
+		log.Printf("[ERROR] Could not parse Service Account ID %s to int", d.Id())
 		return err
 	}
 
 	err = c.DeleteServiceAccount(ID)
-
 	if err != nil {
-		log.Printf("[ERROR] Service Account can not be deleted: %s", ID)
+		log.Printf("[ERROR] Service Account can not be deleted: %d", ID)
 		return err
 	}
 
-	log.Printf("[INFO] Service Account deleted: %s", ID)
+	log.Printf("[INFO] Service Account deleted: %d", ID)
 
 	return nil
 }

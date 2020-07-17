@@ -105,14 +105,19 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("environment_id").(string)
 	deployment := d.Get("deployment").(map[string]interface{})
 	storage := d.Get("storage").(int)
-	network_ingress := d.Get("network_ingress").(int)
-	network_egress := d.Get("network_egress").(int)
+	networkIngress := d.Get("network_ingress").(int)
+	networkEgress := d.Get("network_egress").(int)
 
 	log.Printf("[DEBUG] Creating kafka_cluster")
 
 	dep := ccloud.ClusterCreateDeploymentConfig{
 		AccountID: accountID,
-		Sku:       deployment["sku"].(string),
+	}
+
+	if val, ok := deployment["sku"]; ok {
+		dep.Sku = val.(string)
+	} else {
+		dep.Sku = "BASIC"
 	}
 
 	req := ccloud.ClusterCreateConfig{
@@ -123,13 +128,13 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 		AccountID:       accountID,
 		Durability:      durability,
 		Deployment:      dep,
-		NetworkIngress:  network_ingress,
-		NetworkEgress:   network_egress,
+		NetworkIngress:  networkIngress,
+		NetworkEgress:   networkEgress,
 	}
 
 	cluster, err := c.CreateCluster(req)
-
 	if err != nil {
+		log.Printf("[ERROR] createCluster failed %v, %s", req, err)
 		return err
 	}
 

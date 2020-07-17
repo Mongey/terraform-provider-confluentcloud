@@ -1,4 +1,4 @@
-module github.com/Mongey/terraform-provider-confluent-cloud
+module github.com/Mongey/terraform-provider-confluentcloud
 
 go 1.12
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	c "github.com/Mongey/terraform-provider-confluent-cloud/ccloud"
+	c "github.com/Mongey/terraform-provider-confluentcloud/ccloud"
 
 	"github.com/hashicorp/terraform/plugin"
 )
