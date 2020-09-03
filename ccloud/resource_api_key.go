@@ -44,6 +44,12 @@ func apiKeyResource() *schema.Resource {
 				ForceNew:    true,
 				Description: "Environment ID",
 			},
+			"description": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    false,
+				Description: "Description",
+			},
 			"key": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -64,6 +70,7 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	logicalClusters := d.Get("logical_clusters").([]interface{})
 	accountID := d.Get("environment_id").(string)
 	userID := d.Get("user_id").(int)
+	description := d.Get("description").(string)
 
 	logicalClustersReq := []ccloud.LogicalCluster{}
 
@@ -83,6 +90,7 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 		AccountID:       accountID,
 		UserID:          userID,
 		LogicalClusters: logicalClustersReq,
+		Description:     description,
 	}
 
 	key, err := c.CreateAPIKey(&req)
