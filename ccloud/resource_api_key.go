@@ -47,7 +47,7 @@ func apiKeyResource() *schema.Resource {
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				ForceNew:    false,
+				ForceNew:    true,
 				Description: "Description",
 			},
 			"key": {
