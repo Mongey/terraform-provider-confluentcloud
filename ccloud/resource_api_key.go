@@ -3,8 +3,10 @@ package ccloud
 import (
 	"fmt"
 	"log"
+	"time"
 
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -93,6 +95,7 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 		Description:     description,
 	}
 
+	log.Printf("[DEBUG] Creating API key")
 	key, err := c.CreateAPIKey(&req)
 	if err == nil {
 		d.SetId(fmt.Sprintf("%d", key.ID))
@@ -106,10 +109,27 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 		if err != nil {
 			return err
 		}
+
+		log.Printf("[INFO] Created API Key, waiting for it become usable")
+		stateConf := &resource.StateChangeConf{
+			Pending:      []string{"Pending"},
+			Target:       []string{"Ready"},
+			Refresh:      clusterReady(c, clusterID, accountID, key.Key, key.Secret),
+			Timeout:      300 * time.Second,
+			Delay:        10 * time.Second,
+			PollInterval: 5 * time.Second,
+			MinTimeout:   20 * time.Second,
+		}
+
+		_, err = stateConf.WaitForState()
+		if err != nil {
+			return fmt.Errorf("Error waiting for API Key (%s) to be ready: %s", d.Id(), err)
+		}
 	} else {
 		log.Printf("[ERROR] Could not create API key: %s", err)
 	}
 
+	log.Printf("[INFO] API Key Created successfully: %s", err)
 	return err
 }
 

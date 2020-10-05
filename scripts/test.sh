@@ -2,13 +2,12 @@
 
 set -ex
 
-ARCH=go env GOARCH
-OS=go env GOOS
+ARCH=$(go env GOARCH)
+OS=$(go env GOOS)
 
-go build
+make build
 
-mv bin/${OS}-${ARCH}/terraform-provider-confluentcloud ~/.terraform.d/plugins/${OS}_${ARCH}/
+mv bin/${OS}-${ARCH}/terraform-provider-confluentcloud ~/.terraform.d/plugins/terraform-provider-confluentcloud
 cd examples
 terraform init
-terraform plan
-terraform output
+TF_LOG=debug terraform apply
