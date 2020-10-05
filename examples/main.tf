@@ -1,11 +1,19 @@
+terraform {
+  required_providers {
+    kafka = {
+      source  = "Mongey/kafka"
+      version = "0.2.11"
+    }
+    confluentcloud = {
+      source = "Mongey/confluentcloud"
+    }
+  }
+}
+
 provider "confluentcloud" {}
 
 resource "confluentcloud_environment" "environment" {
-  name = "default"
-}
-
-resource "confluentcloud_environment" "staging" {
-  name = "staging-env"
+  name = "production"
 }
 
 resource "confluentcloud_kafka_cluster" "test" {
@@ -27,7 +35,7 @@ resource "confluentcloud_schema_registry" "test" {
   service_provider = "aws"
   region           = "EU"
 
-  depends_on       = [confluentcloud_kafka_cluster.test]
+  depends_on = [confluentcloud_kafka_cluster.test]
 
 }
 
@@ -47,7 +55,7 @@ provider "kafka" {
   sasl_username  = confluentcloud_api_key.provider_test.key
   sasl_password  = confluentcloud_api_key.provider_test.secret
   sasl_mechanism = "plain"
-  timeout        = 2
+  timeout        = 10
 }
 
 resource "kafka_topic" "syslog" {
