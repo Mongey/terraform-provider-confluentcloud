@@ -91,6 +91,12 @@ func kafkaClusterResource() *schema.Resource {
 					},
 				},
 			},
+			"cku": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "cku",
+				},
 		},
 	}
 }
@@ -107,6 +113,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	storage := d.Get("storage").(int)
 	networkIngress := d.Get("network_ingress").(int)
 	networkEgress := d.Get("network_egress").(int)
+	cku := d.Get("cku").(int)
 
 	log.Printf("[DEBUG] Creating kafka_cluster")
 
@@ -130,6 +137,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 		Deployment:      dep,
 		NetworkIngress:  networkIngress,
 		NetworkEgress:   networkEgress,
+		Cku:             cku,
 	}
 
 	cluster, err := c.CreateCluster(req)
@@ -186,6 +194,9 @@ func clusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	if err == nil {
 		err = d.Set("network_egress", cluster.NetworkEgress)
+	}
+	if err == nil {
+		err = d.Set("cku", cluster.Cku)
 	}
 	return err
 }
