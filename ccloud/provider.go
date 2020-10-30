@@ -29,10 +29,12 @@ func Provider() terraform.ResourceProvider {
 			"confluentcloud_kafka_cluster":   kafkaClusterResource(),
 			"confluentcloud_api_key":         apiKeyResource(),
 			"confluentcloud_environment":     environmentResource(),
+			"confluentcloud_schema_registry": schemaRegistryResource(),
 			"confluentcloud_service_account": serviceAccountResource(),
 		},
 	}
 }
+
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing ConfluentCloud client")
