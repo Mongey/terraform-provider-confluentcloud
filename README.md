@@ -26,6 +26,16 @@ resource "confluentcloud_kafka_cluster" "test" {
   environment_id   = confluentcloud_environment.environment.id
 }
 
+resource "confluentcloud_schema_registry" "test" {
+  environment_id   = confluentcloud_environment.environment.id
+  service_provider = "aws"
+  region           = "EU"
+
+  # Requires at least one kafka cluster to enable 
+  # schema registry in the environment.
+  depends_on       = [confluentcloud_kafka_cluster.test]
+}
+
 resource "confluentcloud_api_key" "provider_test" {
   cluster_id     = confluentcloud_kafka_cluster.test.id
   environment_id = confluentcloud_environment.environment.id
