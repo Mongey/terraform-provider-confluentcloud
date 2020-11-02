@@ -30,7 +30,7 @@ func apiKeyResource() *schema.Resource {
 				},
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Logical Cluster ID List to create API KEY",
+				Description: "Logical Cluster ID List to create API Key",
 			},
 			"user_id": {
 				Type:        schema.TypeInt,
@@ -118,6 +118,29 @@ func apiKeyRead(d *schema.ResourceData, meta interface{}) error {
 }
 
 func apiKeyDelete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] API key cannot be deleted: %s", d.Id())
-	return nil
+	c := meta.(*ccloud.Client)
+
+	clusterID := d.Get("cluster_id").(string)
+	logicalClusters := d.Get("logical_clusters").([]interface{})
+	accountID := d.Get("environment_id").(string)
+
+	logicalClustersReq := []ccloud.LogicalCluster{}
+
+	if len(clusterID) > 0 {
+		logicalClustersReq = append(logicalClustersReq, ccloud.LogicalCluster{ID: clusterID})
+	}
+
+	for i := range logicalClusters {
+		if clusterID != logicalClusters[i].(string) {
+			logicalClustersReq = append(logicalClustersReq, ccloud.LogicalCluster{
+				ID: logicalClusters[i].(string),
+			})
+		}
+	}
+
+	id := d.Id()
+	log.Printf("[INFO] Deleting API key %s in account %s", id, accountID)
+	err := c.DeleteAPIKey(id, accountID, logicalClustersReq)
+
+	return err
 }
