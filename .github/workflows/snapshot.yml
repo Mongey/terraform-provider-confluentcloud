@@ -1,9 +1,10 @@
 name: Build Snapshots
 
 on:
+  pull_request:
   push:
     branches:
-      - '**'
+      - master
 
 jobs:
   goreleaser:
