@@ -56,7 +56,7 @@ func schemaRegistryCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	d.SetId(reg.Name + " " + environment)
+	d.SetId(reg.ID)
 	err = d.Set("endpoint", reg.Endpoint)
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func schemaRegistryRead(d *schema.ResourceData, meta interface{}) error {
 
 	environment := d.Get("environment_id").(string)
 	log.Printf("[INFO] Reading Schema Registry %s", environment)
-	
+
 	env, err := c.GetSchemaRegistry(environment)
 	if err != nil {
 		return err
