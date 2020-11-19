@@ -62,7 +62,7 @@ func serviceAccountCreate(d *schema.ResourceData, meta interface{}) error {
 		log.Printf("[ERROR] Could not create Service Account: %s", err)
 	}
 
-	return nil
+	return err
 }
 
 func serviceAccountRead(d *schema.ResourceData, meta interface{}) error {
