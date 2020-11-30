@@ -2,8 +2,11 @@ package ccloud
 
 import (
 	"log"
+	"strings"
+	"time"
 
 	confluentcloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -35,12 +38,26 @@ func Provider() terraform.ResourceProvider {
 	}
 }
 
-
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	log.Printf("[INFO] Initializing ConfluentCloud client")
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
 	c := confluentcloud.NewClient(username, password)
 
-	return c, c.Login()
+	loginE := c.Login()
+
+	if loginE == nil {
+		return c, loginE
+	}
+
+	return c, resource.Retry(30*time.Minute, func() *resource.RetryError {
+		err := c.Login()
+
+		if strings.Contains(err.Error(), "Exceeded rate limit") {
+			log.Printf("[INFO] ConfluentCloud API rate limit exceeded, retrying.")
+			return resource.RetryableError(err)
+		}
+
+		return resource.NonRetryableError(err)
+	})
 }
