@@ -12,7 +12,10 @@ your [terraform plugin directory][third-party-plugins] (typically `~/.terraform.
 Configure the provider directly, or set the ENV variables `CONFLUENT_CLOUD_USERNAME` &`CONFLUENT_CLOUD_PASSWORD`
 
 ```hcl
-provider "confluentcloud" {}
+provider "confluentcloud" {
+  username = "ccloud@example.org"
+  password = "hunter2"
+}
 
 resource "confluentcloud_environment" "environment" {
   name = "default"
