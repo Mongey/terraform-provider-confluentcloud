@@ -1,21 +1,23 @@
 package ccloud
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
 
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func serviceAccountResource() *schema.Resource {
 	return &schema.Resource{
-		Create: serviceAccountCreate,
-		Read:   serviceAccountRead,
-		Delete: serviceAccountDelete,
+		CreateContext: serviceAccountCreate,
+		ReadContext:   serviceAccountRead,
+		DeleteContext: serviceAccountDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -34,7 +36,7 @@ func serviceAccountResource() *schema.Resource {
 	}
 }
 
-func serviceAccountCreate(d *schema.ResourceData, meta interface{}) error {
+func serviceAccountCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	name := d.Get("name").(string)
@@ -51,37 +53,37 @@ func serviceAccountCreate(d *schema.ResourceData, meta interface{}) error {
 
 		err = d.Set("name", serviceAccount.Name)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		err = d.Set("description", serviceAccount.Description)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 	} else {
 		log.Printf("[ERROR] Could not create Service Account: %s", err)
 	}
 
-	return err
+	return diag.FromErr(err)
 }
 
-func serviceAccountRead(d *schema.ResourceData, meta interface{}) error {
+func serviceAccountRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 
-func serviceAccountDelete(d *schema.ResourceData, meta interface{}) error {
+func serviceAccountDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	ID, err := strconv.Atoi(d.Id())
 	if err != nil {
 		log.Printf("[ERROR] Could not parse Service Account ID %s to int", d.Id())
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = c.DeleteServiceAccount(ID)
 	if err != nil {
 		log.Printf("[ERROR] Service Account can not be deleted: %d", ID)
-		return err
+		return diag.FromErr(err)
 	}
 
 	log.Printf("[INFO] Service Account deleted: %d", ID)
