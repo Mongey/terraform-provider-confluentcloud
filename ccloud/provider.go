@@ -1,11 +1,13 @@
 package ccloud
 
 import (
+	"context"
 	"log"
 	"strings"
 	"time"
 
 	confluentcloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -26,7 +28,7 @@ func Provider() *schema.Provider {
 				DefaultFunc: schema.EnvDefaultFunc("CONFLUENT_CLOUD_PASSWORD", ""),
 			},
 		},
-		ConfigureFunc: providerConfigure,
+		ConfigureContextFunc: providerConfigure,
 		ResourcesMap: map[string]*schema.Resource{
 			"confluentcloud_kafka_cluster":   kafkaClusterResource(),
 			"confluentcloud_api_key":         apiKeyResource(),
@@ -37,19 +39,20 @@ func Provider() *schema.Provider {
 	}
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	log.Printf("[INFO] Initializing ConfluentCloud client")
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
+
+	var diags diag.Diagnostics
 	c := confluentcloud.NewClient(username, password)
 
-	loginE := c.Login()
-
-	if loginE == nil {
-		return c, loginE
+	loginErr := c.Login()
+	if loginErr == nil {
+		return c, diags
 	}
 
-	return c, resource.Retry(30*time.Minute, func() *resource.RetryError {
+	err := resource.RetryContext(ctx, 30*time.Minute, func() *resource.RetryError {
 		err := c.Login()
 
 		if strings.Contains(err.Error(), "Exceeded rate limit") {
@@ -59,4 +62,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 
 		return resource.NonRetryableError(err)
 	})
+
+	return c, diag.FromErr(err)
 }

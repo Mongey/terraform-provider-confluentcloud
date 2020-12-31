@@ -1,6 +1,7 @@
 package ccloud
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
@@ -8,18 +9,18 @@ import (
 
 	"github.com/Shopify/sarama"
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func kafkaClusterResource() *schema.Resource {
 	return &schema.Resource{
-		Create: clusterCreate,
-		Read:   clusterRead,
-		//Update: clusterUpdate,
-		Delete: clusterDelete,
+		CreateContext: clusterCreate,
+		ReadContext:   clusterRead,
+		DeleteContext: clusterDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -105,7 +106,7 @@ func kafkaClusterResource() *schema.Resource {
 	}
 }
 
-func clusterCreate(d *schema.ResourceData, meta interface{}) error {
+func clusterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	name := d.Get("name").(string)
@@ -147,14 +148,14 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	cluster, err := c.CreateCluster(req)
 	if err != nil {
 		log.Printf("[ERROR] createCluster failed %v, %s", req, err)
-		return err
+		return diag.FromErr(err)
 	}
 	d.SetId(cluster.ID)
 	log.Printf("[DEBUG] Created kafka_cluster %s, Endpoint: %s", cluster.ID, cluster.Endpoint)
 
 	err = d.Set("bootstrap_servers", cluster.Endpoint)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	logicalClusters := []ccloud.LogicalCluster{
@@ -170,7 +171,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Creating bootstrap keypair")
 	key, err := c.CreateAPIKey(&apiKeyReq)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	stateConf := &resource.StateChangeConf{
@@ -184,9 +185,9 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Waiting for cluster to become healthy")
-	_, err = stateConf.WaitForState()
+	_, err = stateConf.WaitForStateContext(ctx)
 	if err != nil {
-		return fmt.Errorf("Error waiting for cluster (%s) to be ready: %s", d.Id(), err)
+		return diag.FromErr(fmt.Errorf("Error waiting for cluster (%s) to be ready: %s", d.Id(), err))
 	}
 
 	log.Printf("[DEBUG] Deleting bootstrap keypair")
@@ -236,20 +237,23 @@ func canConnect(connection, username, password string) bool {
 	return true
 }
 
-func clusterDelete(d *schema.ResourceData, meta interface{}) error {
+func clusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 	accountID := d.Get("environment_id").(string)
+	var diags diag.Diagnostics
 
-	return c.DeleteCluster(d.Id(), accountID)
+	if err := c.DeleteCluster(d.Id(), accountID); err != nil {
+		return diag.FromErr(err)
+	}
+	return diags
 }
 
-func clusterRead(d *schema.ResourceData, meta interface{}) error {
+func clusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 	accountID := d.Get("environment_id").(string)
 
 	cluster, err := c.GetCluster(d.Id(), accountID)
 	if err == nil {
-		log.Printf("[WARN] hello %s", cluster.APIEndpoint)
 		err = d.Set("bootstrap_servers", cluster.Endpoint)
 	}
 	if err == nil {
@@ -279,7 +283,8 @@ func clusterRead(d *schema.ResourceData, meta interface{}) error {
 	if err == nil {
 		err = d.Set("cku", cluster.Cku)
 	}
-	return err
+
+	return diag.FromErr(err)
 }
 
 func kafkaClient(connection, username, password string) (sarama.Client, error) {

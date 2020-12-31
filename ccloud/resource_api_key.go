@@ -1,22 +1,24 @@
 package ccloud
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
 
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func apiKeyResource() *schema.Resource {
 	return &schema.Resource{
-		Create: apiKeyCreate,
-		Read:   apiKeyRead,
-		Delete: apiKeyDelete,
+		CreateContext: apiKeyCreate,
+		ReadContext:   apiKeyRead,
+		DeleteContext: apiKeyDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -65,7 +67,7 @@ func apiKeyResource() *schema.Resource {
 	}
 }
 
-func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
+func apiKeyCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	clusterID := d.Get("cluster_id").(string)
@@ -75,7 +77,6 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	description := d.Get("description").(string)
 
 	logicalClustersReq := []ccloud.LogicalCluster{}
-
 	if len(clusterID) > 0 {
 		logicalClustersReq = append(logicalClustersReq, ccloud.LogicalCluster{ID: clusterID})
 	}
@@ -102,12 +103,12 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 
 		err = d.Set("key", key.Key)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		err = d.Set("secret", key.Secret)
 		if err != nil {
-			return err
+			return diag.FromErr(err)
 		}
 
 		log.Printf("[INFO] Created API Key, waiting for it become usable")
@@ -121,23 +122,23 @@ func apiKeyCreate(d *schema.ResourceData, meta interface{}) error {
 			MinTimeout:   20 * time.Second,
 		}
 
-		_, err = stateConf.WaitForState()
+		_, err = stateConf.WaitForStateContext(context.Background())
 		if err != nil {
-			return fmt.Errorf("Error waiting for API Key (%s) to be ready: %s", d.Id(), err)
+			return diag.FromErr(fmt.Errorf("Error waiting for API Key (%s) to be ready: %s", d.Id(), err))
 		}
 	} else {
 		log.Printf("[ERROR] Could not create API key: %s", err)
 	}
 
 	log.Printf("[INFO] API Key Created successfully: %s", err)
-	return err
+	return diag.FromErr(err)
 }
 
-func apiKeyRead(d *schema.ResourceData, meta interface{}) error {
+func apiKeyRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
 
-func apiKeyDelete(d *schema.ResourceData, meta interface{}) error {
+func apiKeyDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	clusterID := d.Get("cluster_id").(string)
@@ -145,7 +146,6 @@ func apiKeyDelete(d *schema.ResourceData, meta interface{}) error {
 	accountID := d.Get("environment_id").(string)
 
 	logicalClustersReq := []ccloud.LogicalCluster{}
-
 	if len(clusterID) > 0 {
 		logicalClustersReq = append(logicalClustersReq, ccloud.LogicalCluster{ID: clusterID})
 	}
@@ -162,5 +162,5 @@ func apiKeyDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Deleting API key %s in account %s", id, accountID)
 	err := c.DeleteAPIKey(id, accountID, logicalClustersReq)
 
-	return err
+	return diag.FromErr(err)
 }

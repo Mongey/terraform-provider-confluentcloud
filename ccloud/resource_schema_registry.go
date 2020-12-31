@@ -1,19 +1,21 @@
 package ccloud
 
 import (
+	"context"
 	"log"
 
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func schemaRegistryResource() *schema.Resource {
 	return &schema.Resource{
-		Create: schemaRegistryCreate,
-		Read:   schemaRegistryRead,
-		Delete: schemaRegistryDelete,
+		CreateContext: schemaRegistryCreate,
+		ReadContext:   schemaRegistryRead,
+		DeleteContext: schemaRegistryDelete,
 		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
+			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
 			"environment_id": {
@@ -42,30 +44,30 @@ func schemaRegistryResource() *schema.Resource {
 	}
 }
 
-func schemaRegistryCreate(d *schema.ResourceData, meta interface{}) error {
+func schemaRegistryCreate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	environment := d.Get("environment_id").(string)
 	region := d.Get("region").(string)
-	service_provider := d.Get("service_provider").(string)
+	serviceProvider := d.Get("service_provider").(string)
 
 	log.Printf("[INFO] Creating Schema Registry %s", environment)
 
-	reg, err := c.CreateSchemaRegistry(environment, region, service_provider)
+	reg, err := c.CreateSchemaRegistry(environment, region, serviceProvider)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	d.SetId(reg.ID)
 	err = d.Set("endpoint", reg.Endpoint)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	return nil
 }
 
-func schemaRegistryRead(d *schema.ResourceData, meta interface{}) error {
+func schemaRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
 	environment := d.Get("environment_id").(string)
@@ -73,7 +75,7 @@ func schemaRegistryRead(d *schema.ResourceData, meta interface{}) error {
 
 	env, err := c.GetSchemaRegistry(environment)
 	if err != nil {
-		return err
+		return diag.FromErr(err)
 	}
 
 	err = d.Set("environment_id", environment)
@@ -81,10 +83,10 @@ func schemaRegistryRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("endpoint", env.Endpoint)
 	}
 
-	return err
+	return diag.FromErr(err)
 }
 
-func schemaRegistryDelete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Schema registry cannot be deleted: %s", d.Id())
+func schemaRegistryDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	log.Printf("[WARN] Schema registry cannot be deleted: %s", d.Id())
 	return nil
 }
