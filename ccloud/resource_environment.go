@@ -4,7 +4,7 @@ import (
 	"log"
 
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func environmentResource() *schema.Resource {

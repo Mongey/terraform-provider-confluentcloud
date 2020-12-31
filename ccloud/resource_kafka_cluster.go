@@ -8,8 +8,8 @@ import (
 
 	"github.com/Shopify/sarama"
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func kafkaClusterResource() *schema.Resource {
