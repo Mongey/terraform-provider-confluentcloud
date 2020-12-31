@@ -220,17 +220,7 @@ func clusterReady(client *ccloud.Client, clusterID, accountID, username, passwor
 }
 
 func canConnect(connection, username, password string) bool {
-	bootstrapServers := strings.Replace(connection, "SASL_SSL://", "", 1)
-	log.Printf("[INFO] Trying to connect to %s", bootstrapServers)
-
-	cfg := sarama.NewConfig()
-	cfg.Net.SASL.Enable = true
-	cfg.Net.SASL.User = username
-	cfg.Net.SASL.Password = password
-	cfg.Net.SASL.Handshake = true
-	cfg.Net.TLS.Enable = true
-
-	client, err := sarama.NewClient([]string{bootstrapServers}, cfg)
+	client, err := kafkaClient(connection, username, password)
 	if err != nil {
 		log.Printf("[ERROR] Could not build client %s", err)
 		return false
@@ -242,7 +232,7 @@ func canConnect(connection, username, password string) bool {
 		return false
 	}
 
-	log.Printf("[INFO] Success! Connected to %s", bootstrapServers)
+	log.Printf("[INFO] Success! Connected to %s", connection)
 	return true
 }
 
@@ -290,4 +280,18 @@ func clusterRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("cku", cluster.Cku)
 	}
 	return err
+}
+
+func kafkaClient(connection, username, password string) (sarama.Client, error) {
+	bootstrapServers := strings.Replace(connection, "SASL_SSL://", "", 1)
+	log.Printf("[INFO] Trying to connect to %s", bootstrapServers)
+
+	cfg := sarama.NewConfig()
+	cfg.Net.SASL.Enable = true
+	cfg.Net.SASL.User = username
+	cfg.Net.SASL.Password = password
+	cfg.Net.SASL.Handshake = true
+	cfg.Net.TLS.Enable = true
+
+	return sarama.NewClient([]string{bootstrapServers}, cfg)
 }
