@@ -164,7 +164,7 @@ func clusterCreate(d *schema.ResourceData, meta interface{}) error {
 	apiKeyReq := ccloud.ApiKeyCreateRequest{
 		AccountID:       accountID,
 		LogicalClusters: logicalClusters,
-		Description:     "terraform-provider-kafka cluster connection bootstrap",
+		Description:     "terraform-provider-confluentcloud cluster connection bootstrap",
 	}
 
 	log.Printf("[DEBUG] Creating bootstrap keypair")
