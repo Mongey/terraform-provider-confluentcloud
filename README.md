@@ -66,8 +66,7 @@ resource "confluentcloud_schema_registry" "test" {
   service_provider = "aws"
   region           = "EU"
 
-  # Requires at least one kafka cluster to enable
-  # schema registry in the environment.
+  # Requires at least one kafka cluster to enable the schema registry in the environment.
   depends_on = [confluentcloud_kafka_cluster.test]
 }
 
