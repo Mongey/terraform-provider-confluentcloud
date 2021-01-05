@@ -5,20 +5,46 @@ A [Terraform][1] plugin for managing [Confluent Cloud Kafka Clusters][2].
 ## Installation
 
 Download and extract the [latest release](https://github.com/Mongey/terraform-provider-confluentcloud/releases/latest) to
-your [terraform plugin directory][third-party-plugins] (typically `~/.terraform.d/plugins/`)
+your [terraform plugin directory][third-party-plugins] (typically `~/.terraform.d/plugins/`) or define the plugin in the required_providers block.
+
+```hcl
+terraform {
+  required_providers {
+    kafka = {
+      source  = "Mongey/kafka"
+      version = "0.2.11"
+    }
+    confluentcloud = {
+      source = "Mongey/confluentcloud"
+    }
+  }
+}
+```
 
 ## Example
 
 Configure the provider directly, or set the ENV variables `CONFLUENT_CLOUD_USERNAME` &`CONFLUENT_CLOUD_PASSWORD`
 
 ```hcl
+terraform {
+  required_providers {
+    kafka = {
+      source  = "Mongey/kafka"
+      version = "0.2.11"
+    }
+    confluentcloud = {
+      source = "Mongey/confluentcloud"
+    }
+  }
+}
+
 provider "confluentcloud" {
   username = "ccloud@example.org"
   password = "hunter2"
 }
 
 resource "confluentcloud_environment" "environment" {
-  name = "default"
+  name = "production"
 }
 
 resource "confluentcloud_kafka_cluster" "test" {
@@ -27,6 +53,12 @@ resource "confluentcloud_kafka_cluster" "test" {
   region           = "eu-west-1"
   availability     = "LOW"
   environment_id   = confluentcloud_environment.environment.id
+  deployment = {
+    sku = "BASIC"
+  }
+  network_egress  = 100
+  network_ingress = 100
+  storage         = 5000
 }
 
 resource "confluentcloud_schema_registry" "test" {
@@ -34,9 +66,9 @@ resource "confluentcloud_schema_registry" "test" {
   service_provider = "aws"
   region           = "EU"
 
-  # Requires at least one kafka cluster to enable 
+  # Requires at least one kafka cluster to enable
   # schema registry in the environment.
-  depends_on       = [confluentcloud_kafka_cluster.test]
+  depends_on = [confluentcloud_kafka_cluster.test]
 }
 
 resource "confluentcloud_api_key" "provider_test" {
@@ -60,12 +92,16 @@ provider "kafka" {
   sasl_username  = confluentcloud_api_key.provider_test.key
   sasl_password  = confluentcloud_api_key.provider_test.secret
   sasl_mechanism = "plain"
+  timeout        = 10
 }
 
 resource "kafka_topic" "syslog" {
-  name               = "syslog2"
+  name               = "syslog"
   replication_factor = 3
   partitions         = 1
+  config = {
+    "cleanup.policy" = "delete"
+  }
 }
 
 output "kafka_url" {
