@@ -10,10 +10,6 @@ your [terraform plugin directory][third-party-plugins] (typically `~/.terraform.
 ```hcl
 terraform {
   required_providers {
-    kafka = {
-      source  = "Mongey/kafka"
-      version = "0.2.11"
-    }
     confluentcloud = {
       source = "Mongey/confluentcloud"
     }
@@ -28,12 +24,12 @@ Configure the provider directly, or set the ENV variables `CONFLUENT_CLOUD_USERN
 ```hcl
 terraform {
   required_providers {
+    confluentcloud = {
+      source = "Mongey/confluentcloud"
+    }
     kafka = {
       source  = "Mongey/kafka"
       version = "0.2.11"
-    }
-    confluentcloud = {
-      source = "Mongey/confluentcloud"
     }
   }
 }
