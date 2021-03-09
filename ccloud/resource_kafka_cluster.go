@@ -178,7 +178,7 @@ func clusterCreate(ctx context.Context, d *schema.ResourceData, meta interface{}
 		Pending:      []string{"Pending"},
 		Target:       []string{"Ready"},
 		Refresh:      clusterReady(c, d.Id(), accountID, key.Key, key.Secret),
-		Timeout:      300 * time.Second,
+		Timeout:      1800 * time.Second,
 		Delay:        3 * time.Second,
 		PollInterval: 5 * time.Second,
 		MinTimeout:   20 * time.Second,
