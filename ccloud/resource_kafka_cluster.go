@@ -86,14 +86,9 @@ func kafkaClusterResource() *schema.Resource {
 				Type:        schema.TypeMap,
 				Optional:    true,
 				ForceNew:    true,
-				Description: "Deployment settings.  Currently only `sku` is supported.",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"sku": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
+				Description: "Deployment settings. Currently only `sku` is supported.",
+				Elem: &schema.Schema{
+					Type:     schema.TypeString,
 				},
 			},
 			"cku": {
