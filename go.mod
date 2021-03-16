@@ -13,11 +13,10 @@ require (
 	github.com/frankban/quicktest v1.11.0 // indirect
 	github.com/go-resty/resty/v2 v2.2.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-hclog v0.15.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
-	github.com/hashicorp/go-plugin v1.4.0 // indirect
-	github.com/hashicorp/terraform-plugin-docs v0.3.0 // indirect
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.0.3
+	github.com/hashicorp/go-uuid v1.0.2 // indirect
+	github.com/hashicorp/terraform-plugin-docs v0.3.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.4.4
 	github.com/hashicorp/yamux v0.0.0-20200609203250-aecfd211c9ce // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
