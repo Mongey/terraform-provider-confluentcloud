@@ -1,6 +1,6 @@
 module github.com/Mongey/terraform-provider-confluentcloud
 
-go 1.12
+go 1.16
 
 require (
 	cloud.google.com/go v0.74.0 // indirect
