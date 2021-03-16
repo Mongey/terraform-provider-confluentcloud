@@ -36,7 +36,6 @@ resource "confluentcloud_schema_registry" "test" {
   region           = "EU"
 
   depends_on = [confluentcloud_kafka_cluster.test]
-
 }
 
 resource "confluentcloud_api_key" "provider_test" {
