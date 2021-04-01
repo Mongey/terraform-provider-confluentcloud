@@ -9,6 +9,7 @@ import (
 	ccloud "github.com/cgroschupp/go-client-confluent-cloud/confluentcloud"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -35,6 +36,14 @@ func apiKeyResource() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: "Logical Cluster ID List to create API Key",
+			},
+			"target_resource_type": {
+				Type: schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Default: "kafka_cluster",
+				Description: "Type of the resource to which the api keys are created for.",
+				ValidateFunc: validation.StringInSlice([]string { "kafka_cluster", "schema_registry" }, false),
 			},
 			"user_id": {
 				Type:        schema.TypeInt,
@@ -75,6 +84,7 @@ func apiKeyCreate(ctx context.Context, d *schema.ResourceData, meta interface{})
 	accountID := d.Get("environment_id").(string)
 	userID := d.Get("user_id").(int)
 	description := d.Get("description").(string)
+	targetResourceType := d.Get("target_resource_type").(string)
 
 	logicalClustersReq := []ccloud.LogicalCluster{}
 	if len(clusterID) > 0 {
@@ -111,20 +121,24 @@ func apiKeyCreate(ctx context.Context, d *schema.ResourceData, meta interface{})
 			return diag.FromErr(err)
 		}
 
-		log.Printf("[INFO] Created API Key, waiting for it become usable")
-		stateConf := &resource.StateChangeConf{
-			Pending:      []string{"Pending"},
-			Target:       []string{"Ready"},
-			Refresh:      clusterReady(c, clusterID, accountID, key.Key, key.Secret),
-			Timeout:      300 * time.Second,
-			Delay:        10 * time.Second,
-			PollInterval: 5 * time.Second,
-			MinTimeout:   20 * time.Second,
-		}
+		if targetResourceType == "kafka_cluster" {
+			log.Printf("[INFO] Created API Key, waiting for it become usable")
+			stateConf := &resource.StateChangeConf{
+				Pending:      []string{"Pending"},
+				Target:       []string{"Ready"},
+				Refresh:      clusterReady(c, clusterID, accountID, key.Key, key.Secret),
+				Timeout:      300 * time.Second,
+				Delay:        10 * time.Second,
+				PollInterval: 5 * time.Second,
+				MinTimeout:   20 * time.Second,
+			}
 
-		_, err = stateConf.WaitForStateContext(context.Background())
-		if err != nil {
-			return diag.FromErr(fmt.Errorf("Error waiting for API Key (%s) to be ready: %s", d.Id(), err))
+			_, err = stateConf.WaitForStateContext(context.Background())
+			if err != nil {
+				return diag.FromErr(fmt.Errorf("Error waiting for API Key (%s) to be ready: %s", d.Id(), err))
+			}
+		} else {
+			log.Print("[INFO] Not an api key for a Kafka cluster. Do not wait when it becomes usable.")
 		}
 	} else {
 		log.Printf("[ERROR] Could not create API key: %s", err)
