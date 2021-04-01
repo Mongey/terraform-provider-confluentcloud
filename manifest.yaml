@@ -1,0 +1,11 @@
+metadata:
+  type: infrastructure
+  project: terraform-provider-confluentcloud
+  description: "Worldremit's fork of Mongey/terraform-provider-confluentcloud"
+  owner:
+    team: devops
+    slack: '#devops-help'
+    email: devops@worldremit.com
+
+attrs:
+  jira: "https://worldremit.atlassian.net/secure/RapidBoard.jspa?rapidView=526&projectKey=DEVOPS"
