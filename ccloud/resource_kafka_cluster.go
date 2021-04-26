@@ -244,8 +244,8 @@ func clusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}
 }
 
 func clusterImport(_ context.Context, d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
-	envIDAndClusterId := d.Id()
-	parts := strings.Split(envIDAndClusterId, ":")
+	envIDAndClusterID := d.Id()
+	parts := strings.Split(envIDAndClusterID, "/")
 
 	var err error
 	if len(parts) != 2 {
