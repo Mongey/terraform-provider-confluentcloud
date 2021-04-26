@@ -20,7 +20,7 @@ func kafkaClusterResource() *schema.Resource {
 		ReadContext:   clusterRead,
 		DeleteContext: clusterDelete,
 		Importer: &schema.ResourceImporter{
-			StateContext: schema.ImportStatePassthroughContext,
+			StateContext: clusterImport,
 		},
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -241,6 +241,24 @@ func clusterDelete(ctx context.Context, d *schema.ResourceData, meta interface{}
 		return diag.FromErr(err)
 	}
 	return diags
+}
+
+func clusterImport(_ context.Context, d *schema.ResourceData, _ interface{}) ([]*schema.ResourceData, error) {
+	envIDAndClusterID := d.Id()
+	parts := strings.Split(envIDAndClusterID, "/")
+
+	var err error
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid format for cluster import: expected '<env ID>/<cluster ID>'")
+	}
+
+	d.SetId(parts[1])
+	err = d.Set("environment_id", parts[0])
+	if err != nil {
+		return nil, err
+	}
+
+	return []*schema.ResourceData{d}, nil
 }
 
 func clusterRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

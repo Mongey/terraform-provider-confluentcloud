@@ -114,6 +114,14 @@ output "secret" {
 }
 ```
 
+## Importing existing resources
+
+This provider supports importing existing Confluent Cloud resources via [`terraform import`][3].
+
+Most resource types use the import IDs returned by the [`ccloud`][4] CLI, with the exception of clusters, which expect an import ID of the form `<environment ID>/<cluster ID>`.
+
 [1]: https://www.terraform.io
 [2]: https://confluent.cloud
+[3]: https://www.terraform.io/docs/cli/import/index.html
+[4]: https://docs.confluent.io/ccloud-cli/current/index.html
 [third-party-plugins]: https://www.terraform.io/docs/configuration/providers.html#third-party-plugins

@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+
 	"github.com/hashicorp/go-uuid"
 	r "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -37,6 +39,17 @@ func TestAcc_BasicCluster(t *testing.T) {
 		Steps: []r.TestStep{
 			{
 				Config: fmt.Sprintf(testResourceCluster_noConfig, u, u),
+			},
+			{
+				ResourceName: "confluentcloud_kafka_cluster.test",
+				ImportState:  true,
+				ImportStateIdFunc: func(state *terraform.State) (string, error) {
+					resources := state.RootModule().Resources
+					clusterId := resources["confluentcloud_kafka_cluster.test"].Primary.ID
+					envId := resources["confluentcloud_environment.test"].Primary.ID
+					return envId + "/" + clusterId, nil
+				},
+				ImportStateVerify: true,
 			},
 		},
 	})
