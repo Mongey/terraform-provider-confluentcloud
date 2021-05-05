@@ -118,7 +118,8 @@ output "secret" {
 
 This provider supports importing existing Confluent Cloud resources via [`terraform import`][3].
 
-Most resource types use the import IDs returned by the [`ccloud`][4] CLI, with the exception of clusters, which expect an import ID of the form `<environment ID>/<cluster ID>`.
+Most resource types use the import IDs returned by the [`ccloud`][4] CLI.
+`confluentcloud_kafka_cluster` and `confluentcloud_schema_registry` can be imported using `<environment ID>/<cluster ID>`.
 
 [1]: https://www.terraform.io
 [2]: https://confluent.cloud
