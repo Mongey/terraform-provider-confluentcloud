@@ -33,6 +33,10 @@ func TestAcc_SchemaRegistry(t *testing.T) {
 					return (envID + "/" + schemaRegistryID), nil
 				},
 				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					"region",
+					"service_provider",
+				},
 			},
 		},
 	})
