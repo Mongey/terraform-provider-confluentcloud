@@ -2,6 +2,7 @@ package ccloud
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -24,7 +25,7 @@ func serviceAccountResource() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "",
+				Description: "Service Account Name",
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -68,7 +69,44 @@ func serviceAccountCreate(ctx context.Context, d *schema.ResourceData, meta inte
 }
 
 func serviceAccountRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c := meta.(*ccloud.Client)
+
+	ID, err := strconv.Atoi(d.Id())
+	if err != nil {
+		log.Printf("[ERROR] Could not parse Service Account ID %s to int", d.Id())
+		return diag.FromErr(err)
+	}
+	account, err := getServiceAccount(c, ID)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	err = d.Set("name", account.Name)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	err = d.Set("description", account.Description)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
 	return nil
+}
+
+func getServiceAccount(client *ccloud.Client, id int) (*ccloud.ServiceAccount, error) {
+	accounts, err := client.ListServiceAccounts()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, account := range accounts {
+		if account.ID == id {
+			return &account, nil
+		}
+	}
+
+	return nil, errors.New("Unable to find service account")
 }
 
 func serviceAccountDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
