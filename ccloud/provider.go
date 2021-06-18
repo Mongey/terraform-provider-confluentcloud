@@ -35,6 +35,7 @@ func Provider() *schema.Provider {
 			"confluentcloud_environment":     environmentResource(),
 			"confluentcloud_schema_registry": schemaRegistryResource(),
 			"confluentcloud_service_account": serviceAccountResource(),
+			"confluentcloud_connector":       connectorResource(),
 		},
 	}
 }
