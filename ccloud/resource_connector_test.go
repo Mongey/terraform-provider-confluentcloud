@@ -2,8 +2,9 @@ package ccloud
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
 	"github.com/hashicorp/go-uuid"
 	r "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -61,24 +62,25 @@ resource "confluentcloud_kafka_cluster" "test" {
 }
 
 resource "confluentcloud_api_key" "test" {
-  environment_id = confluentcloud_environment.test.id
-  cluster_id = confluentcloud_kafka_cluster.test.id
+	environment_id = confluentcloud_environment.test.id
+	cluster_id = confluentcloud_kafka_cluster.test.id
 }
 
 resource "confluentcloud_connector" "test" {
-  name = "acc_test_connector-%s"
-  environment_id = confluentcloud_environment.test.id
-  cluster_id = confluentcloud_kafka_cluster.test.id
-   config = {
-        "kafka.topic" = "test-datagen-data",
-        "connector.class" = "DatagenSource",
-        "name" = "acc_test_connector-%s",
-        "kafka.api.key" = confluentcloud_api_key.test.key,
-        "kafka.api.secret" = confluentcloud_api_key.test.secret,
-        "output.data.format" = "JSON",
-        "quickstart" = "USERS",
-        "max.interval" = "10000",
-        "tasks.max" = "1"
-    }
+	name           = "acc_test_connector-%s"
+	environment_id = confluentcloud_environment.test.id
+	cluster_id     = confluentcloud_kafka_cluster.test.id
+
+	config = {
+		"kafka.topic" 			 = "test-datagen-data",
+		"connector.class"    = "DatagenSource",
+		"name" 							 = "acc_test_connector-%s",
+		"kafka.api.key" 		 = confluentcloud_api_key.test.key,
+		"kafka.api.secret"   = confluentcloud_api_key.test.secret,
+		"output.data.format" = "JSON",
+		"quickstart"         = "USERS",
+		"max.interval"       = "10000",
+		"tasks.max" 				 = "1"
+	}
 }
 `
