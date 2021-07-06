@@ -84,4 +84,5 @@ resource "confluentcloud_connector" "test" {
     "tasks.max"             = "1"
   }
 }
+}
 `
