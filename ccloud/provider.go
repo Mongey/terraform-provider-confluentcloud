@@ -29,6 +29,9 @@ func Provider() *schema.Provider {
 			},
 		},
 		ConfigureContextFunc: providerConfigure,
+		DataSourcesMap: map[string]*schema.Resource{
+			"confluentcloud_environment": environmentDataSource(),
+		},
 		ResourcesMap: map[string]*schema.Resource{
 			"confluentcloud_kafka_cluster":   kafkaClusterResource(),
 			"confluentcloud_api_key":         apiKeyResource(),
