@@ -56,7 +56,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	err := resource.RetryContext(ctx, 30*time.Minute, func() *resource.RetryError {
 		err := c.Login()
 
-		if strings.Contains(err.Error(), "Exceeded rate limit") {
+		if err != nil && strings.Contains(err.Error(), "Exceeded rate limit") {
 			log.Printf("[INFO] ConfluentCloud API rate limit exceeded, retrying.")
 			return resource.RetryableError(err)
 		}
