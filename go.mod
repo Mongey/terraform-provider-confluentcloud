@@ -7,6 +7,7 @@ require (
 	cloud.google.com/go/storage v1.12.0 // indirect
 	github.com/Shopify/sarama v1.27.1
 	github.com/agext/levenshtein v1.2.3 // indirect
+	github.com/agl/ed25519 v0.0.0-20170116200512-5312a6153412 // indirect
 	github.com/aws/aws-sdk-go v1.36.18 // indirect
 	github.com/cgroschupp/go-client-confluent-cloud v0.0.0-20210518145537-98176441a5a5
 	github.com/fatih/color v1.10.0 // indirect
@@ -16,8 +17,9 @@ require (
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/hashicorp/terraform-plugin-docs v0.3.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
 	github.com/hashicorp/yamux v0.0.0-20200609203250-aecfd211c9ce // indirect
+	github.com/keybase/go-crypto v0.0.0-20161004153544-93f5b35093ba // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.0 // indirect
