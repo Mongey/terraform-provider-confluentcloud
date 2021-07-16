@@ -26,15 +26,20 @@ func environmentDataSource() *schema.Resource {
 func environmentDataSourceRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
-	log.Printf("[INFO] Reading Environment %s", d.Id())
-	env, err := c.GetEnvironment(d.Id())
+	name := d.Get("name").(string)
+	log.Printf("[INFO] Reading Environment %s", name)
+	environments, err := c.ListEnvironments()
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	err = d.Set("name", env.Name)
-	if err != nil {
-		return diag.FromErr(err)
+	for _, environment := range environments {
+		if environment.Name == name {
+			d.SetId(environment.ID)
+			d.Set("name", environment.Name)
+
+			return nil
+		}
 	}
 
 	return nil

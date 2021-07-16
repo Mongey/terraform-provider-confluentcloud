@@ -20,9 +20,8 @@ func TestAccEnvironmentDataSourceTest(t *testing.T) {
 		Providers: accProvider(),
 		Steps: []r.TestStep{
 			{
-				Config:             testAccEnvironmentFilterConfig(name),
-				ExpectNonEmptyPlan: true,
-				Check:              checkDatasourceDashboardListAttrs(name),
+				Config: testAccEnvironmentFilterConfig(name),
+				Check:  checkDatasourceDashboardListAttrs(name),
 			},
 		},
 	})
@@ -37,20 +36,13 @@ func checkDatasourceDashboardListAttrs(uniq string) r.TestCheckFunc {
 	)
 }
 
-func testAccEnvironment(uniq string) string {
+func testAccEnvironmentFilterConfig(uniq string) string {
 	return fmt.Sprintf(`
 resource "confluentcloud_environment" "test" {
   name = "%s"
-}`, uniq)
 }
 
-func testAccEnvironmentFilterConfig(uniq string) string {
-	return fmt.Sprintf(`
-%s
 data "confluentcloud_environment" "test" {
-  depends_on = [
-    confluentcloud_environment.test,
-  ]
-  name = "%s"
-}`, testAccEnvironment(uniq), uniq)
+  name = confluentcloud_environment.test.name
+}`, uniq)
 }
