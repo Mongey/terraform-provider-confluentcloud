@@ -111,18 +111,24 @@ func apiKeyCreate(ctx context.Context, d *schema.ResourceData, meta interface{})
 			return diag.FromErr(err)
 		}
 
-		log.Printf("[INFO] Created API Key, waiting for it become usable")
-		stateConf := &resource.StateChangeConf{
-			Pending:      []string{"Pending"},
-			Target:       []string{"Ready"},
-			Refresh:      clusterReady(c, clusterID, accountID, key.Key, key.Secret),
-			Timeout:      300 * time.Second,
-			Delay:        10 * time.Second,
-			PollInterval: 5 * time.Second,
-			MinTimeout:   20 * time.Second,
+		if len(clusterID) > 0 {
+			log.Printf("[INFO] Created API Key, waiting for it become usable")
+
+			stateConf := &resource.StateChangeConf{
+				Pending:      []string{"Pending"},
+				Target:       []string{"Ready"},
+				Refresh:      clusterReady(c, clusterID, accountID, key.Key, key.Secret),
+				Timeout:      300 * time.Second,
+				Delay:        10 * time.Second,
+				PollInterval: 5 * time.Second,
+				MinTimeout:   20 * time.Second,
+			}
+
+			_, err = stateConf.WaitForStateContext(context.Background())
+		} else {
+			log.Printf("[INFO] Created API Key")
 		}
 
-		_, err = stateConf.WaitForStateContext(context.Background())
 		if err != nil {
 			return diag.FromErr(fmt.Errorf("Error waiting for API Key (%s) to be ready: %s", d.Id(), err))
 		}
