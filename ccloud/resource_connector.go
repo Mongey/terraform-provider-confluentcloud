@@ -60,7 +60,7 @@ func connectorResource() *schema.Resource {
 				Type:        schema.TypeMap,
 				Required:    true,
 				ForceNew:    false,
-				Description: "Type-specific Configuration of cluster. String keys and values",
+				Description: "Type-specific Configuration of connector. String keys and values",
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 					// ignore common auto-generated config fields
 					for _, ik := range ignoreConnectorConfigs() {
@@ -82,6 +82,13 @@ func connectorResource() *schema.Resource {
 					return false
 				},
 			},
+			"config_sensitive": {
+				Type:        schema.TypeMap,
+				Optional:    true,
+				ForceNew:    false,
+				Sensitive:   true,
+				Description: "Sensitive part of connector configuration. String keys and values",
+			},
 		},
 	}
 }
@@ -91,12 +98,16 @@ func connectorUpdate(_ context.Context, d *schema.ResourceData, meta interface{}
 
 	name := d.Get("name").(string)
 	config := d.Get("config").(map[string]interface{})
+	configSensitive := d.Get("config_sensitive").(map[string]interface{})
 	accountID := d.Get("environment_id").(string)
 	clusterID := d.Get("cluster_id").(string)
 
 	log.Printf("[DEBUG] Updating connector config")
 	configStrings := make(map[string]string)
 	for key, value := range config {
+		configStrings[key] = value.(string)
+	}
+	for key, value := range configSensitive {
 		configStrings[key] = value.(string)
 	}
 
@@ -117,12 +128,16 @@ func connectorCreate(ctx context.Context, d *schema.ResourceData, meta interface
 
 	name := d.Get("name").(string)
 	config := d.Get("config").(map[string]interface{})
+	configSensitive := d.Get("config_sensitive").(map[string]interface{})
 	accountID := d.Get("environment_id").(string)
 	clusterID := d.Get("cluster_id").(string)
 
 	log.Printf("[DEBUG] Creating connector")
 	configStrings := make(map[string]string)
 	for key, value := range config {
+		configStrings[key] = value.(string)
+	}
+	for key, value := range configSensitive {
 		configStrings[key] = value.(string)
 	}
 
