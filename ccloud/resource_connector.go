@@ -22,6 +22,7 @@ func ignoreConnectorConfigs() []string {
 		"config.cloud.provider",
 		"config.cloud.environment",
 		"config.valid.kafka.api.key",
+		"config.schema.registry.url",
 	}
 }
 
@@ -73,9 +74,9 @@ func connectorResource() *schema.Resource {
 						return true
 					}
 
-					// Kafka API key and secret pose a problem. What if they REALLY have changed? No way to detect here.
+					// Sensitive data are not returned from status query, so changes made to it outside of terraform could not be tracked
 					masked, _ := regexp.MatchString("\\*+", old)
-					if (k == "config.kafka.api.key" || k == "config.kafka.api.secret") && masked {
+					if masked {
 						return true
 					}
 
