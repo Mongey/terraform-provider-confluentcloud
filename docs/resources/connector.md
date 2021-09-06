@@ -22,7 +22,7 @@ description: |-
 
 ### Optional
 
-- **config_sensitive** (Map of String) Sensitive part of connector configuration. String keys and values
+- **config_sensitive** (Map of String, Sensitive) Sensitive part of connector configuration. String keys and values
 - **id** (String) The ID of this resource.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 

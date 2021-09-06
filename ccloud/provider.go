@@ -31,6 +31,7 @@ func Provider() *schema.Provider {
 		ConfigureContextFunc: providerConfigure,
 		DataSourcesMap: map[string]*schema.Resource{
 			"confluentcloud_environment": environmentDataSource(),
+			"confluentcloud_service_account": serviceAccountDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"confluentcloud_kafka_cluster":   kafkaClusterResource(),
