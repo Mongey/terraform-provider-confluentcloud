@@ -5,12 +5,13 @@ go 1.16
 require (
 	cloud.google.com/go v0.74.0 // indirect
 	cloud.google.com/go/storage v1.12.0 // indirect
-	github.com/Shopify/sarama v1.33.0
+	github.com/Shopify/sarama v1.34.0
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/aws/aws-sdk-go v1.36.18 // indirect
 	github.com/cgroschupp/go-client-confluent-cloud v0.0.0-20210518145537-98176441a5a5
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/go-resty/resty/v2 v2.2.0 // indirect
+	github.com/google/go-cmp v0.5.7 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.2
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
