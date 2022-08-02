@@ -73,7 +73,11 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 			return resource.RetryableError(err)
 		}
 
-		return resource.NonRetryableError(err)
+		if err != nil {
+			return resource.NonRetryableError(err)
+		}
+
+		return nil
 	})
 
 	return c, diag.FromErr(err)
