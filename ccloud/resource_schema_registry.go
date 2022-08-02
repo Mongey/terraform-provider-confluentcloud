@@ -82,6 +82,10 @@ func schemaRegistryRead(ctx context.Context, d *schema.ResourceData, meta interf
 		return diag.FromErr(err)
 	}
 
+	if registry == nil {
+		return diag.Errorf("Unable to read schema registry")
+	}
+
 	err = d.Set("environment_id", environmentID)
 	if err != nil {
 		return diag.FromErr(err)
