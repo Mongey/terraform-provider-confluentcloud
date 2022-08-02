@@ -59,6 +59,7 @@ func schemaRegistryCreate(ctx context.Context, d *schema.ResourceData, meta inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	log.Printf("[INFO] Created Schema Registry %s", reg.ID)
 
 	d.SetId(reg.ID)
 
