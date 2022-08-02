@@ -74,11 +74,9 @@ func schemaRegistryCreate(ctx context.Context, d *schema.ResourceData, meta inte
 func schemaRegistryRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c := meta.(*ccloud.Client)
 
-	environmentID := d.Get("environment_id").(string)
+	log.Printf("[INFO] Reading Schema Registry %s", d.Id())
 
-	log.Printf("[INFO] Reading Schema Registry %s", environmentID)
-
-	registry, err := c.GetSchemaRegistry(environmentID)
+	registry, err := c.GetSchemaRegistry(d.Id())
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -87,10 +85,11 @@ func schemaRegistryRead(ctx context.Context, d *schema.ResourceData, meta interf
 		return diag.Errorf("Unable to read schema registry")
 	}
 
-	err = d.Set("environment_id", environmentID)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+	//environmentID := registry.environment
+	//err = d.Set("environment_id", environmentID)
+	//if err != nil {
+	//return diag.FromErr(err)
+	//}
 
 	err = d.Set("endpoint", registry.Endpoint)
 	if err != nil {
