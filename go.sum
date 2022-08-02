@@ -51,6 +51,8 @@ github.com/Microsoft/go-winio v0.4.16 h1:FtSW/jqD+l4ba5iPBj9CODVtgfYAD8w2wS923g/
 github.com/Microsoft/go-winio v0.4.16/go.mod h1:XB6nPKklQyQ7GC9LdcBEcBl8PF76WugXOPRXwdLnMv0=
 github.com/Mongey/go-client-confluent-cloud v0.0.0-20210716182312-db34016c1db0 h1:sarpWjcqbtmKlltcEWNxrQJJiKtfqbmhZDJZusmqNSo=
 github.com/Mongey/go-client-confluent-cloud v0.0.0-20210716182312-db34016c1db0/go.mod h1:4qz2Pftxeus+mcGJkiysWrDwf/uQL1+jEI/Yu5BpS60=
+github.com/Mongey/go-client-confluent-cloud v0.0.0-20220802032606-e46d310fe41d h1:F/8sjn/WTh2v4p4hAviGyYXkvCyTrO8Kg6I6Af61S18=
+github.com/Mongey/go-client-confluent-cloud v0.0.0-20220802032606-e46d310fe41d/go.mod h1:4qz2Pftxeus+mcGJkiysWrDwf/uQL1+jEI/Yu5BpS60=
 github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 h1:YoJbenK9C67SkzkDfmQuVln04ygHj3vjZfd9FL+GmQQ=
 github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7/go.mod h1:z4/9nQmJSSwwds7ejkxaJwO37dru3geImFUdJlaLzQo=
 github.com/Shopify/sarama v1.33.0 h1:2K4mB9M4fo46sAM7t6QTsmSO8dLX1OqznLM7vn3OjZ8=
