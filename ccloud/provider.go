@@ -3,6 +3,7 @@ package ccloud
 import (
 	"context"
 	"log"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -30,7 +31,7 @@ func Provider() *schema.Provider {
 		},
 		ConfigureContextFunc: providerConfigure,
 		DataSourcesMap: map[string]*schema.Resource{
-			"confluentcloud_environment": environmentDataSource(),
+			"confluentcloud_environment":     environmentDataSource(),
 			"confluentcloud_service_account": serviceAccountDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -48,6 +49,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	log.Printf("[INFO] Initializing ConfluentCloud client")
 	username := d.Get("username").(string)
 	password := d.Get("password").(string)
+	wait := 2
 
 	var diags diag.Diagnostics
 	c := confluentcloud.NewClient(username, password, false)
@@ -61,11 +63,21 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 		err := c.Login()
 
 		if err != nil && strings.Contains(err.Error(), "Exceeded rate limit") {
-			log.Printf("[INFO] ConfluentCloud API rate limit exceeded, retrying.")
+			rand.Seed(time.Now().UnixNano())
+			randomNumberMilliseconds := rand.Intn(1001)
+			timeSleep := time.Duration(wait)*time.Second + time.Duration(randomNumberMilliseconds)
+
+			log.Printf("[INFO] ConfluentCloud API rate limit exceeded, retrying in %s.", timeSleep)
+			time.Sleep(timeSleep)
+			wait = wait * 2
 			return resource.RetryableError(err)
 		}
 
-		return resource.NonRetryableError(err)
+		if err != nil {
+			return resource.NonRetryableError(err)
+		}
+
+		return nil
 	})
 
 	return c, diag.FromErr(err)

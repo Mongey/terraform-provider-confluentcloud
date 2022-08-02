@@ -40,9 +40,10 @@ func testAccServiceAccountFilterConfig(uniq string) string {
 	return fmt.Sprintf(`
 resource "confluentcloud_service_account" "test" {
   name = "%s"
+  description    = "service account acc test"
 }
 
 data "confluentcloud_service_account" "test" {
-  name = confluentcloud_environment.test.name
+  name = confluentcloud_service_account.test.name
 }`, uniq)
 }
