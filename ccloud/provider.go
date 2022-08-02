@@ -31,7 +31,7 @@ func Provider() *schema.Provider {
 		},
 		ConfigureContextFunc: providerConfigure,
 		DataSourcesMap: map[string]*schema.Resource{
-			"confluentcloud_environment": environmentDataSource(),
+			"confluentcloud_environment":     environmentDataSource(),
 			"confluentcloud_service_account": serviceAccountDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
@@ -52,7 +52,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	wait := 2
 
 	var diags diag.Diagnostics
-	c := confluentcloud.NewClient(username, password, false)
+	c := confluentcloud.NewClient(username, password, true)
 
 	loginErr := c.Login()
 	if loginErr == nil {
