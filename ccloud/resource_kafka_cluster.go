@@ -22,6 +22,9 @@ func kafkaClusterResource() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: clusterImport,
 		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(24 * 60 * time.Minute),
+		},
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
