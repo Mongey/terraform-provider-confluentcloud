@@ -53,6 +53,8 @@ github.com/Mongey/go-client-confluent-cloud v0.0.0-20210716182312-db34016c1db0 h
 github.com/Mongey/go-client-confluent-cloud v0.0.0-20210716182312-db34016c1db0/go.mod h1:4qz2Pftxeus+mcGJkiysWrDwf/uQL1+jEI/Yu5BpS60=
 github.com/Mongey/go-client-confluent-cloud v0.0.0-20220802032606-e46d310fe41d h1:F/8sjn/WTh2v4p4hAviGyYXkvCyTrO8Kg6I6Af61S18=
 github.com/Mongey/go-client-confluent-cloud v0.0.0-20220802032606-e46d310fe41d/go.mod h1:4qz2Pftxeus+mcGJkiysWrDwf/uQL1+jEI/Yu5BpS60=
+github.com/Mongey/go-client-confluent-cloud v0.0.0-20220802034856-d1ffb9b0c486 h1:jj/Dp+dYfaxtSSYk1k9yXIA/eenPzOiO+JLtlPSe5VA=
+github.com/Mongey/go-client-confluent-cloud v0.0.0-20220802034856-d1ffb9b0c486/go.mod h1:4qz2Pftxeus+mcGJkiysWrDwf/uQL1+jEI/Yu5BpS60=
 github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 h1:YoJbenK9C67SkzkDfmQuVln04ygHj3vjZfd9FL+GmQQ=
 github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7/go.mod h1:z4/9nQmJSSwwds7ejkxaJwO37dru3geImFUdJlaLzQo=
 github.com/Shopify/sarama v1.33.0 h1:2K4mB9M4fo46sAM7t6QTsmSO8dLX1OqznLM7vn3OjZ8=
@@ -88,6 +90,8 @@ github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d/go.mod h1:6QX/PXZ
 github.com/bgentry/speakeasy v0.1.0 h1:ByYyxL9InA1OWqxJqqp2A5pYHUrCiAL6K3J+LKSsQkY=
 github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
+github.com/cgroschupp/go-client-confluent-cloud v0.0.0-20210518145537-98176441a5a5 h1:FcquQzk6Hh5hxfP9pPtb8Td5F4mXhXh8J5kYw1EPnHM=
+github.com/cgroschupp/go-client-confluent-cloud v0.0.0-20210518145537-98176441a5a5/go.mod h1:4qz2Pftxeus+mcGJkiysWrDwf/uQL1+jEI/Yu5BpS60=
 github.com/cheggaaa/pb v1.0.27/go.mod h1:pQciLPpbU0oxA0h+VJYYLxO+XeDQb5pZijXscXHm81s=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
