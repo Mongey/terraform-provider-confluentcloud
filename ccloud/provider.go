@@ -52,7 +52,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 	wait := 2
 
 	var diags diag.Diagnostics
-	c := confluentcloud.NewClient(username, password, true)
+	c := confluentcloud.NewClient(username, password, false)
 
 	loginErr := c.Login()
 	if loginErr == nil {
