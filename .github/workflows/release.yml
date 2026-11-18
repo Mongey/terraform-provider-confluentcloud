@@ -21,18 +21,17 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
-      - uses: actions/cache@v3.0.11
+      - uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v3.2.0
+        uses: goreleaser/goreleaser-action@v7
         with:
-          version: latest
-          args: release --rm-dist
-          key: ${{ secrets.YOUR_PRIVATE_KEY }}
+          version: '~> v2'
+          args: release --clean
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
